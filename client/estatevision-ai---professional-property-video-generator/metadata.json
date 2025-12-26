@@ -1,0 +1,8 @@
+{
+  "name": "EstateVision AI - Professional Property Video Generator",
+  "description": "A high-end platform for real estate agents to generate AI-powered property walkthrough videos, professional scripts, and voiceovers using Gemini 3 and Veo 3.1.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
