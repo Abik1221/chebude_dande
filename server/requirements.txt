@@ -13,6 +13,8 @@ langgraph==0.2.11
 langchain==0.2.13
 langchain-openai==0.1.6
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 python-jose[cryptography]==3.3.0
 python-dotenv==1.0.0
 requests==2.31.0
+PyJWT==2.8.0

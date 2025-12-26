@@ -19,40 +19,36 @@ def seed_admin_user():
     
     try:
         # Check if user already exists
-        existing_user = db.query(User).filter(User.email == "nahi@gmail.com").first()
+        existing_user = db.query(User).filter(User.email == "admin@example.com").first()
         
         if not existing_user:
-            # Generate a default password if not specified
-            default_password = "123abcdsystem"
+            # Generate a default password
+            default_password = "admin123"
             hashed_password = auth_service.get_password_hash(default_password)
             
             # Create admin user
             admin_user = User(
                 username="admin",
-                email="nahi@gmail.com",
+                email="admin@example.com",
                 hashed_password=hashed_password,
                 full_name="System Admin",
                 is_admin=True,
-                credits=1000  # Give admin plenty of credits
+                credits=1000
             )
             
             db.add(admin_user)
             db.commit()
             db.refresh(admin_user)
             
-            print(f"Admin user created successfully!")
-            print(f"Email: nahi@gmail.com")
-            print(f"Password: 123abcdsystem")
-            print(f"Username: admin")
-            print(f"User ID: {admin_user.id}")
+            print(f"✓ Admin user created successfully!")
+            print(f"  Username: admin")
+            print(f"  Password: admin123")
+            print(f"  Email: admin@example.com")
         else:
-            print(f"Admin user already exists!")
-            print(f"Email: {existing_user.email}")
-            print(f"Username: {existing_user.username}")
-            print(f"User ID: {existing_user.id}")
+            print(f"✓ Admin user already exists: {existing_user.username}")
     
     except Exception as e:
-        print(f"Error seeding admin user: {str(e)}")
+        print(f"✗ Error seeding admin user: {str(e)}")
         db.rollback()
     finally:
         db.close()

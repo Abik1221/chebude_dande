@@ -356,3 +356,72 @@ def create_video_generation_workflow():
 
 # Create the compiled workflow
 compiled_workflow = create_video_generation_workflow()
+
+
+class VideoGenerationWorkflow:
+    """Wrapper class for the video generation workflow"""
+    
+    def __init__(self):
+        self.workflow = compiled_workflow
+    
+    async def run_workflow(self, input_data: dict):
+        """Run the video generation workflow with input data"""
+        from app.services.tts_service import TTSManager
+        from app.services.video_service import VideoProcessor
+        from app.database import get_db
+        
+        # Get database session
+        db = next(get_db())
+        
+        try:
+            # Initialize services
+            tts_manager = TTSManager()
+            video_processor = VideoProcessor()
+            
+            # Prepare initial state
+            initial_state = VideoGenerationState(
+                input_video_path=input_data['input_file_path'],
+                description_text=input_data['description_text'],
+                target_language=input_data['target_language'],
+                processed_text="",
+                audio_path="",
+                output_video_path="",
+                job_id=input_data['job_id'],
+                db_session=db,
+                tts_manager=tts_manager,
+                video_processor=video_processor,
+                error_message="",
+                progress=0
+            )
+            
+            # Run the workflow
+            result = await self.workflow.ainvoke(initial_state)
+            
+            # Return result object
+            return WorkflowResult(
+                status="COMPLETED" if not result.get('error_message') else "FAILED",
+                progress=result.get('progress', 100),
+                output_path=result.get('output_video_path'),
+                error_message=result.get('error_message')
+            )
+            
+        except Exception as e:
+            logger.error(f"Workflow execution failed: {str(e)}")
+            return WorkflowResult(
+                status="FAILED",
+                progress=100,
+                output_path=None,
+                error_message=str(e)
+            )
+        finally:
+            db.close()
+
+
+class WorkflowResult:
+    """Result object for workflow execution"""
+    
+    def __init__(self, status: str, progress: int, output_path: str = None, error_message: str = None):
+        self.status = status
+        self.progress = progress
+        self.output_path = output_path
+        self.error_message = error_message

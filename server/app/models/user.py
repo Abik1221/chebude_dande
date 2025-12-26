@@ -28,14 +28,12 @@ class User(Base):
     
     @staticmethod
     def hash_password(plain_password):
-        """Hash a plain password using SHA256"""
-        import hashlib
-        return hashlib.sha256(plain_password.encode()).hexdigest()
+        """Hash a plain password using bcrypt"""
+        return pwd_context.hash(plain_password)
     
     def verify_password(self, plain_password):
-        """Verify a plain password against the hashed password"""
-        import hashlib
-        return self.hashed_password == hashlib.sha256(plain_password.encode()).hexdigest()
+        """Verify a plain password against the hashed password using bcrypt"""
+        return pwd_context.verify(plain_password, self.hashed_password)
     
     @staticmethod
     def generate_password(length=12):

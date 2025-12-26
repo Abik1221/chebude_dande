@@ -7,6 +7,13 @@ import Login from './components/Login'; // Add Login component
 import SettingsComponent from './components/Settings'; // Add Settings component
 import { AppView, User as UserType, PropertyVideo, GenerationStatus } from './types';
 import { apiService } from './services/apiService';
+import axios from 'axios';
+
+// Create axios instance for direct access
+const apiClient = axios.create({
+  baseURL: process.env.VITE_API_URL || 'http://localhost:8000',
+  timeout: 30000,
+});
 
 // Mock Initial State
 const MOCK_USER: UserType = {
@@ -31,6 +38,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
+      // Set the authorization header
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
       // Try to get user info with the token
       const fetchUser = async () => {
         try {
@@ -49,6 +59,7 @@ const App: React.FC = () => {
         } catch (error) {
           // Token might be invalid, clear it
           localStorage.removeItem('access_token');
+          delete apiClient.defaults.headers.common['Authorization'];
           setIsAuth(false);
         }
       };
@@ -75,13 +86,13 @@ const App: React.FC = () => {
     }
   };
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (username: string, password: string) => {
     setLoginLoading(true);
     setLoginError(null);
     
     try {
       // Call the login API
-      const loginResponse = await apiService.login(email, password);
+      const loginResponse = await apiService.login(username, password);
       
       // Convert backend user to frontend user format
       const frontendUser: UserType = {
@@ -96,7 +107,7 @@ const App: React.FC = () => {
       setUser(frontendUser);
       setIsAuth(true);
     } catch (error: any) {
-      setLoginError(error.response?.data?.detail || 'Invalid email or password. Please try again.');
+      setLoginError(error.response?.data?.detail || 'Invalid username or password. Please try again.');
     } finally {
       setLoginLoading(false);
     }

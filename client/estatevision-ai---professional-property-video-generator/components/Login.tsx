@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
 
 interface LoginProps {
-  onLogin: (email: string, password: string) => void;
+  onLogin: (username: string, password: string) => void;
   loading?: boolean;
   error?: string;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin, loading = false, error }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(email, password);
+    onLogin(username, password);
   };
 
   return (
@@ -39,20 +39,20 @@ const Login: React.FC<LoginProps> = ({ onLogin, loading = false, error }) => {
           
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label htmlFor="email" className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-2">
-                Email Address
+              <label htmlFor="username" className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-2">
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User size={16} className="text-zinc-400" />
                 </div>
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-zinc-200 text-sm focus:border-black focus:ring-0 outline-none transition-all bg-zinc-50"
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   required
                 />
               </div>

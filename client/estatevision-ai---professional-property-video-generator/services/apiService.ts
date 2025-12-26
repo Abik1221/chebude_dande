@@ -100,11 +100,14 @@ export interface ChangePasswordRequest {
 export const apiService = {
   // Authentication methods
   login: async (username: string, password: string): Promise<UserLoginResponse> => {
-    const response = await apiClient.post('/api/v1/auth/login', null, {
-      params: {
-        username,
-        password
-      }
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    
+    const response = await apiClient.post('/api/v1/auth/login', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
     // Store token in localStorage
     const token = response.data.access_token;

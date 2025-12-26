@@ -7,7 +7,7 @@ import secrets
 import string
 from app.models.user import User, UserSession
 from app.config import settings
-import PyJWT as jwt
+import jwt
 
 
 class AuthService:
@@ -18,14 +18,12 @@ class AuthService:
         self.access_token_expire_minutes = settings.access_token_expire_minutes
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        """Verify a plain password against the hashed password"""
-        import hashlib
-        return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
+        """Verify a plain password against the hashed password using bcrypt"""
+        return self.pwd_context.verify(plain_password, hashed_password)
 
     def get_password_hash(self, password: str) -> str:
-        """Hash a plain password using simple hash (temporary solution)"""
-        import hashlib
-        return hashlib.sha256(password.encode()).hexdigest()
+        """Hash a plain password using bcrypt"""
+        return self.pwd_context.hash(password)
 
     def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None) -> str:
         """Create a JWT access token"""
@@ -43,7 +41,7 @@ class AuthService:
         try:
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
             return payload
-        except jwt.JWTError:
+        except jwt.InvalidTokenError:
             return None
 
     def authenticate_user(self, db: Session, username: str, password: str) -> Optional[User]:

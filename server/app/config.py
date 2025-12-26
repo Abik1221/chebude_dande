@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     google_cloud_credentials: Optional[str] = None
     google_service_account_file: Optional[str] = None
     google_gemini_api_key: Optional[str] = None  # New Google Gemini API key
+    google_application_credentials: Optional[str] = None  # Added this field
     
     # Security
     secret_key: str = "your-secret-key-here-change-in-production"
@@ -27,6 +28,8 @@ class Settings(BaseSettings):
     max_video_size_mb: int = 100
     max_description_length: int = 5000
     video_processing_quality: str = "720p"
+    upload_folder: str = "./uploads"
+    allowed_video_formats: List[str] = ["mp4", "avi", "mov", "mkv", "webm"]
     
     # System settings
     enable_tts_fallback: bool = True

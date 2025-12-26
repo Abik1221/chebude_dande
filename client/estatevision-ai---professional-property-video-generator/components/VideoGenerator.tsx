@@ -43,23 +43,23 @@ const VideoGenerator: React.FC<{ onComplete: (video: any) => void }> = ({ onComp
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith('video/')) {
-        setError('Please select a video file (MP4, MOV, AVI)');
-        return;
-      }
-      
-      // Validate file size (max 100MB)
+      // Only validate file size (max 100MB)
       if (file.size > 100 * 1024 * 1024) {
         setError('File size exceeds 100MB limit');
         return;
       }
       
       setSelectedVideo(file);
+      setError(null); // Clear any previous errors
       
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      // Create preview URL (only for video files)
+      try {
+        const url = URL.createObjectURL(file);
+        setPreviewUrl(url);
+      } catch (err) {
+        // If preview fails, just continue without preview
+        setPreviewUrl(null);
+      }
     }
   };
 
@@ -157,16 +157,22 @@ const VideoGenerator: React.FC<{ onComplete: (video: any) => void }> = ({ onComp
               >
                 {previewUrl ? (
                   <>
-                    <video src={previewUrl} className="w-full h-full object-cover" controls />
+                    <div className="w-full h-full bg-zinc-100 flex items-center justify-center">
+                      <div className="text-center">
+                        <Upload className="text-zinc-400 mb-2 mx-auto" size={24} />
+                        <p className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">File Selected</p>
+                        <p className="text-[8px] text-zinc-500 mt-1">{selectedVideo?.name}</p>
+                      </div>
+                    </div>
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-white text-[10px] font-black uppercase tracking-widest">Change Video</span>
+                      <span className="text-white text-[10px] font-black uppercase tracking-widest">Change File</span>
                     </div>
                   </>
                 ) : (
                   <>
                     <Upload className="text-zinc-300 mb-2" size={24} />
-                    <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Select Video File</p>
-                    <p className="text-[8px] text-zinc-500 mt-1">MP4, MOV, AVI up to 100MB</p>
+                    <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Select Any File</p>
+                    <p className="text-[8px] text-zinc-500 mt-1">Any video file up to 100MB</p>
                   </>
                 )}
                 <input 
@@ -174,7 +180,6 @@ const VideoGenerator: React.FC<{ onComplete: (video: any) => void }> = ({ onComp
                   ref={fileInputRef} 
                   onChange={handleFileChange} 
                   className="hidden" 
-                  accept="video/mp4,video/mov,video/avi,video/quicktime"
                 />
               </div>
               
