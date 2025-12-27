@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Activity, ArrowRight } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (username: string, password: string) => void;
@@ -18,116 +18,128 @@ const Login: React.FC<LoginProps> = ({ onLogin, loading = false, error }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <div className="mx-auto w-16 h-16 bg-black flex items-center justify-center rounded-lg">
-            <span className="text-white font-black text-2xl">EV</span>
+    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-zinc-950">
+      {/* Subtle Aesthetic Background */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/assets/login-bg.svg"
+          alt=""
+          className="w-full h-full object-cover opacity-40 grayscale"
+        />
+        <div className="absolute inset-0 bg-gradient-to-tr from-zinc-950 via-transparent to-zinc-900/50"></div>
+      </div>
+
+      <div className="relative w-full max-w-sm mx-auto">
+        <div className="bg-zinc-800/40 backdrop-blur-3xl p-10 rounded-[2.5rem] border border-white/10 shadow-3xl shadow-zinc-950/40 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-zinc-700/20 rounded-full blur-3xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-zinc-700/10 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+          <div className="relative z-10">
+            <div className="text-center mb-10">
+              <div className="mx-auto w-16 h-16 mb-6">
+                <div className="w-full h-full bg-zinc-900 rounded-xl p-2 border border-zinc-700 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/logo.jpg"
+                    alt="Metronavix Logo"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+              <h1 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-1">
+                Internal Access
+              </h1>
+              <h2 className="text-3xl font-black text-white tracking-tighter drop-shadow-sm">
+                Metronavix <span className="text-zinc-400">OS</span>
+              </h2>
+            </div>
+
+            {error && (
+              <div className="mb-8 p-4 bg-red-900/20 border border-red-800/50 text-red-300 text-[10px] font-bold uppercase tracking-wider text-center rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="username" className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-300 mb-2.5 ml-0.5">
+                  Username
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User size={16} className="text-zinc-400 group-focus-within:text-zinc-300 transition-colors" />
+                  </div>
+                  <input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3.5 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-sm font-medium text-white focus:bg-zinc-800 focus:border-white/20 focus:ring-0 outline-none transition-all placeholder:text-zinc-500 drop-shadow-sm"
+                    placeholder="Enter system username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-300 mb-2.5 ml-0.5">
+                  Password
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock size={16} className="text-zinc-400 group-focus-within:text-zinc-300 transition-colors" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-11 pr-12 py-3.5 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-sm font-medium text-white focus:bg-zinc-800 focus:border-white/20 focus:ring-0 outline-none transition-all placeholder:text-zinc-500 drop-shadow-sm"
+                    placeholder="Enter security password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-400 hover:text-white transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center pt-2">
+                <label className="flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 bg-zinc-800 border-zinc-700 rounded text-white focus:ring-white transition-all cursor-pointer"
+                  />
+                  <span className="ml-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 group-hover:text-white transition-colors drop-shadow-sm">Remember this session</span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-white hover:bg-zinc-200 text-zinc-900 py-4 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-white/5"
+              >
+                {loading ? (
+                  <>
+                    <Activity size={16} className="animate-spin" />
+                    Authenticating...
+                  </>
+                ) : (
+                  <>
+                    Authenticate
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+            </form>
           </div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter mt-4">EstateVision AI</h1>
-          <p className="text-zinc-500 text-sm mt-2">Property Video Generation Platform</p>
         </div>
 
-        <div className="bg-white border border-zinc-200 p-8 shadow-sm">
-          <h2 className="text-xl font-black uppercase tracking-widest text-center mb-8">Access Portal</h2>
-          
-          {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded">
-              {error}
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label htmlFor="username" className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-2">
-                Username
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={16} className="text-zinc-400" />
-                </div>
-                <input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-zinc-200 text-sm focus:border-black focus:ring-0 outline-none transition-all bg-zinc-50"
-                  placeholder="Enter your username"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <label htmlFor="password" className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={16} className="text-zinc-400" />
-                </div>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border border-zinc-200 text-sm focus:border-black focus:ring-0 outline-none transition-all bg-zinc-50"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff size={16} className="text-zinc-400 hover:text-zinc-600" />
-                  ) : (
-                    <Eye size={16} className="text-zinc-400 hover:text-zinc-600" />
-                  )}
-                </button>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between mb-6">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 text-black focus:ring-black border-zinc-300 rounded"
-                />
-                <span className="ml-2 text-sm text-zinc-600">Remember me</span>
-              </label>
-              <a href="#" className="text-sm text-black hover:underline font-medium">
-                Forgot password?
-              </a>
-            </div>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-3 px-4 text-white font-black uppercase tracking-widest text-sm rounded transition-all ${
-                loading 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-black hover:bg-zinc-800 active:scale-[0.98]'
-              }`}
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </button>
-          </form>
-          
-          <div className="mt-8 text-center">
-            <p className="text-sm text-zinc-600">
-              Don't have an account?{' '}
-              <a href="#" className="text-black font-medium hover:underline">
-                Request Access
-              </a>
-            </p>
-          </div>
-        </div>
-        
-        <div className="mt-8 text-center">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest">
-            © {new Date().getFullYear()} EstateVision AI. All rights reserved.
+        <div className="mt-12 text-center">
+          <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-[0.5em] opacity-40">
+            METRONAVIX SECURITY v4.0.1
           </p>
         </div>
       </div>

@@ -86,6 +86,10 @@ async def generate_video(
         db.commit()
         db.refresh(job)
         
+        # Record job creation log
+        from app.services.logging_service import logging_service
+        logging_service.log(db, f"New video generation job #{job.id} initialized by {current_user.username}", level="INFO", module="JOBS")
+
         logger.info(f"Created job {job.id} for video generation")
         
         # Start the video processing in the background
@@ -220,6 +224,11 @@ async def process_video_with_narration(job_id: int, video_path: str, description
             job.status = "COMPLETED"
             job.progress = 100
             job.output_file_path = output_path
+            
+            # Record job completion log
+            from app.services.logging_service import logging_service
+            logging_service.log(db, f"Job #{job_id} processing completed successfully", level="SUCCESS", module="JOBS")
+
             logger.info(f"Successfully completed video processing for job {job_id}")
         else:
             # Error
@@ -236,6 +245,10 @@ async def process_video_with_narration(job_id: int, video_path: str, description
         logger.error(f"Error processing video for job {job_id}: {str(e)}")
         job.status = "FAILED"
         job.error_message = str(e)
+        
+        # Record job failure log
+        from app.services.logging_service import logging_service
+        logging_service.log(db, f"Error processing job #{job_id}: {str(e)}", level="ERROR", module="JOBS")
         
     finally:
         db.commit()

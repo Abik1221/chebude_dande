@@ -29,6 +29,7 @@ export interface PropertyVideo {
 }
 
 export interface User {
+  id: number | string;
   name: string;
   email: string;
   company: string;
@@ -37,8 +38,17 @@ export interface User {
 }
 
 export interface SystemLog {
-  id: string;
-  timestamp: Date;
-  event: string;
-  type: 'INFO' | 'SUCCESS' | 'ERROR';
+  id: number | string;
+  level: string;
+  module: string;
+  message: string;
+  timestamp: Date | string;
+}
+
+export interface SystemStats {
+  total_jobs: number;
+  completed_jobs: number;
+  success_rate: string;
+  network_uptime: string;
+  stream_latency: string;
 }

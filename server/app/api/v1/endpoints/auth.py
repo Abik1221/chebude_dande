@@ -110,6 +110,9 @@ async def login_user(
     user.last_login = func.now()
     db.commit()
     
+    # Record login event in system logs
+    logging_service.log(db, f"User '{user.username}' authenticated successfully", level="SUCCESS", module="AUTH")
+
     # Create access token
     access_token_expires = timedelta(minutes=auth_service.access_token_expire_minutes)
     access_token = auth_service.create_access_token(

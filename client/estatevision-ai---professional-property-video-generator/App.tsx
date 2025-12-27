@@ -19,8 +19,8 @@ const apiClient = axios.create({
 const MOCK_USER: UserType = {
   id: 1,
   name: 'Internal Admin',
-  email: 'admin@estatevision-internal.com',
-  company: 'EstateVision HQ',
+  email: 'admin@metronavix-internal.com',
+  company: 'Metronavix HQ',
   avatar: '', // Custom letter avatar used instead
   credits: 500,
 };
@@ -40,7 +40,7 @@ const App: React.FC = () => {
     if (token) {
       // Set the authorization header
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+
       // Try to get user info with the token
       const fetchUser = async () => {
         try {
@@ -50,7 +50,7 @@ const App: React.FC = () => {
             id: userData.id,
             name: userData.full_name || userData.username,
             email: userData.email,
-            company: 'EstateVision AI',
+            company: 'Metronavix',
             avatar: '',
             credits: userData.credits,
           };
@@ -73,7 +73,7 @@ const App: React.FC = () => {
         const selected = await (window as any).aistudio.hasSelectedApiKey();
         setHasKey(selected);
       } else {
-        setHasKey(true); 
+        setHasKey(true);
       }
     };
     checkKey();
@@ -82,28 +82,28 @@ const App: React.FC = () => {
   const handleOpenKeySelection = async () => {
     if ((window as any).aistudio) {
       await (window as any).aistudio.openSelectKey();
-      setHasKey(true); 
+      setHasKey(true);
     }
   };
 
   const handleLogin = async (username: string, password: string) => {
     setLoginLoading(true);
     setLoginError(null);
-    
+
     try {
       // Call the login API
       const loginResponse = await apiService.login(username, password);
-      
+
       // Convert backend user to frontend user format
       const frontendUser: UserType = {
         id: loginResponse.user.id,
         name: loginResponse.user.full_name || loginResponse.user.username,
         email: loginResponse.user.email,
-        company: 'EstateVision AI',
+        company: 'Metronavix',
         avatar: '',
         credits: loginResponse.user.credits,
       };
-      
+
       setUser(frontendUser);
       setIsAuth(true);
     } catch (error: any) {
@@ -144,9 +144,9 @@ const App: React.FC = () => {
     switch (currentView) {
       case AppView.DASHBOARD:
         return (
-          <Dashboard 
-            onStartGenerating={() => setView(AppView.GENERATE)} 
-            recentVideos={videos} 
+          <Dashboard
+            onStartGenerating={() => setView(AppView.GENERATE)}
+            recentVideos={videos}
           />
         );
       case AppView.GENERATE:
@@ -166,10 +166,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <Layout 
-      currentView={currentView} 
-      setView={setView} 
-      user={user!} 
+    <Layout
+      currentView={currentView}
+      setView={setView}
+      user={user!}
       onLogout={handleLogout}
     >
       {renderContent()}

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SystemLog, SystemStats } from '../types';
 
 // Define API base URL
 const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:8000';
@@ -14,9 +15,7 @@ export interface Job {
   id: number;
   status: string;
   progress: number;
-  input_file_path?: string;
-  output_file_path?: string;
-  error_message?: string;
+  target_language: string;
   created_at: string;
   updated_at: string;
 }
@@ -103,7 +102,7 @@ export const apiService = {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
-    
+
     const response = await apiClient.post('/api/v1/auth/login', formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -237,6 +236,17 @@ export const apiService = {
   // Initialize default settings
   initializeDefaultSettings: async (): Promise<{ message: string; count: number }> => {
     const response = await apiClient.post('/api/v1/settings/initialize');
+    return response.data;
+  },
+
+  // System statistics and logs
+  getSystemLogs: async (limit: number = 20): Promise<SystemLog[]> => {
+    const response = await apiClient.get('/api/v1/logs', { params: { limit } });
+    return response.data;
+  },
+
+  getSystemStats: async (): Promise<SystemStats> => {
+    const response = await apiClient.get('/api/v1/stats');
     return response.data;
   },
 };

@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from typing import Optional, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from passlib.context import CryptContext
 import secrets
 import string
 from app.models.user import User, UserSession
@@ -10,20 +9,34 @@ from app.config import settings
 import jwt
 
 
+import bcrypt
+
+
 class AuthService:
     def __init__(self):
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         self.algorithm = "HS256"
         self.secret_key = settings.secret_key
         self.access_token_expire_minutes = settings.access_token_expire_minutes
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Verify a plain password against the hashed password using bcrypt"""
-        return self.pwd_context.verify(plain_password, hashed_password)
+        try:
+            # Handle both string and bytes for hashed_password
+            if isinstance(hashed_password, str):
+                hashed_bytes = hashed_password.encode('utf-8')
+            else:
+                hashed_bytes = hashed_password
+            
+            return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_bytes)
+        except Exception:
+            return False
 
     def get_password_hash(self, password: str) -> str:
         """Hash a plain password using bcrypt"""
-        return self.pwd_context.hash(password)
+        pwd_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(pwd_bytes, salt)
+        return hashed.decode('utf-8')
 
     def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None) -> str:
         """Create a JWT access token"""
