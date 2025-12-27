@@ -1,0 +1,6 @@
+Starting Login Debug...
+Attempting login for: admin
+User found: admin
+Hash in DB: $2b$12$NXR/zmgg7Z37SRNp1u3LOu6Faczxo6/X4gCNYVnwVTs/kyuf.xbPC
+auth_service.verify_password result: True
+auth_service.authenticate_user result: True

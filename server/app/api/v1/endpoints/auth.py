@@ -111,6 +111,7 @@ async def login_user(
     db.commit()
     
     # Record login event in system logs
+    from app.services.logging_service import logging_service
     logging_service.log(db, f"User '{user.username}' authenticated successfully", level="SUCCESS", module="AUTH")
 
     # Create access token

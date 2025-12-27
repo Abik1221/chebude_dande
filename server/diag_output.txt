@@ -1,0 +1,7 @@
+Starting Diagnostics...
+Database URL: sqlite:///./estatevision_ai.db
+Found 2 users.
+User: testuser, Admin: False
+User: admin, Admin: True
+Admin already exists. Resetting password...
+Admin password reset to 'admin123'.

@@ -35,7 +35,7 @@ try:
 
     # Add default settings if they don't exist
     default_settings = [
-        {"key": "app_name", "value": "EstateVision AI", "description": "Application name", "type": "string"},
+        {"key": "app_name", "value": "Metronavix", "description": "Application name", "type": "string"},
         {"key": "app_version", "value": "1.0.0", "description": "Application version", "type": "string"},
         {"key": "default_language", "value": "en", "description": "Default language for video generation", "type": "string"},
         {"key": "max_video_size_mb", "value": "100", "description": "Maximum video size in MB", "type": "integer"},
@@ -52,11 +52,21 @@ try:
             db.add(setting)
             print(f"✓ Added setting: {setting_data['key']}")
 
-    # Create default admin user if it doesn't exist (skip for now due to bcrypt issues)
+    # Create default admin user if it doesn't exist
+    from app.services.auth_service import auth_service
     admin_user = db.query(User).filter(User.username == "admin").first()
     if not admin_user:
-        print("⚠️  Skipping admin user creation due to bcrypt compatibility issues")
-        print("   You can create users through the API endpoints later")
+        hashed_password = auth_service.get_password_hash("admin123")
+        admin_user = User(
+            username="admin",
+            email="admin@metronavix-internal.com",
+            hashed_password=hashed_password,
+            full_name="System Admin",
+            is_admin=True,
+            credits=1000
+        )
+        db.add(admin_user)
+        print("✓ Created default admin user ('admin' / 'admin123')")
 
     db.commit()
     print("\n🎉 Database initialization completed successfully!")

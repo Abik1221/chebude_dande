@@ -104,6 +104,10 @@ const App: React.FC = () => {
         credits: loginResponse.user.credits,
       };
 
+      // Update Axios headers for subsequent requests
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.access_token}`;
+      localStorage.setItem('access_token', loginResponse.access_token);
+
       setUser(frontendUser);
       setIsAuth(true);
     } catch (error: any) {
@@ -132,6 +136,7 @@ const App: React.FC = () => {
       setIsAuth(false);
       setUser(null);
       localStorage.removeItem('access_token');
+      delete apiClient.defaults.headers.common['Authorization'];
     }
   };
 
